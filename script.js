@@ -1,4 +1,4 @@
-//Add Button functionality
+// Add Button functionality
 const addList = document.forms["add-item"];
 const input = document.getElementById("input");
 const errorText = document.getElementById("error-text-con");
@@ -17,59 +17,61 @@ addList.addEventListener("submit", function (event) {
     input.style.boxShadow = "0 0 10px 1px white";
     errorText.style.display = "none";
     createTaskElement(value);
-    saveTask(input.value);
-    loadTask(task);
+    saveTask(value);
     input.value = "";
   }
 });
 
-    //Creating Elements
-    function createTaskElement(value) {
-      const ulList = document.querySelector("ul");
-      const li = document.createElement("li");
-      const p = document.createElement("p");
-      const deleteButton = document.createElement("button");
+// Creating Elements
+function createTaskElement(value) {
+  const ulList = document.querySelector("ul");
+  const li = document.createElement("li");
+  const p = document.createElement("p");
+  const deleteButton = document.createElement("button");
 
-      //append to DOM
-      ulList.appendChild(li);
-      li.appendChild(p);
-      li.appendChild(deleteButton);
+  // Append to DOM
+  ulList.appendChild(li);
+  li.appendChild(p);
+  li.appendChild(deleteButton);
 
-      //class list to the Elements
-      li.classList = "list-item";
-      p.textContent = value;
-      p.classList = "list-text";
-      deleteButton.textContent = "Done ✔";
-      deleteButton.classList = "delete-button";
-    }
+  // Class list to the Elements
+  li.classList = "list-item";
+  p.textContent = value;
+  p.classList = "list-text";
+  deleteButton.textContent = "Done ✔";
+  deleteButton.classList = "delete-button";
+}
 
-    // Save to the local Storage
+// Save to local Storage
+function saveTask(task) {
+  const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+  tasks.push(task);
+  localStorage.setItem("tasks", JSON.stringify(tasks));
+}
 
-  function saveTask(task) {
-    const tasks = JSON.parse(localStorage.getItem("value")) || [];
-    tasks.push(task);
-    localStorage.setItem("value", JSON.stringify(tasks));
-  }
-  
-  //load tasks 
+// Load tasks from local Storage
+function loadTask() {
+  const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+  tasks.forEach((task) => createTaskElement(task));
+}
 
-  function loadTask() {
-    const tasks = JSON.parse(localStorage.getItem("value")) || [];
-    tasks.forEach((task) => createTaskElement(task));
-  }
-  document.addEventListener("DOMContentLoaded", loadTask);
+document.addEventListener("DOMContentLoaded", loadTask);
 
-
-//Creating delete button for each item
-const deleteButton = document.querySelector(".box ul");
-
-deleteButton.addEventListener("click", function (event) {
+// Delete button functionality
+const ulList = document.querySelector(".box ul");
+ulList.addEventListener("click", function (event) {
   event.preventDefault();
-  if ((event.target.className = "delete-button")) {
+  if (event.target.className === "delete-button") {
     const li = event.target.parentElement;
-    deleteButton.removeChild(li);
+    ulList.removeChild(li);
+    deleteTask(li.querySelector(".list-text").textContent);
   }
 });
 
-
-// localStorage.clear();
+// Delete task from local Storage
+function deleteTask(task) {
+  let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+  tasks = tasks.filter((t) => t !== task);
+  localStorage.setItem("tasks", JSON.stringify(tasks));
+}
+// localStorage.clear()
